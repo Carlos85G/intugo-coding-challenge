@@ -8,6 +8,11 @@ use App\Exceptions\RuleEvaluator\OperationInvalidException;
 use App\Exceptions\RuleEvaluator\UserNotFoundException;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Helper class to evaluate user authorization to a resource tag
+ * 
+ * @author Carlos González
+ */
 class RuleEvaluator {
     /**
      * Valid operation function suffixes,
