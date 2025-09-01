@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Event;
 use App\Events\ModelTransitioning;
 use App\Events\ModelTransitioned;
 
+/**
+ * Helper trait to add a state to a model
+ * 
+ * @author Carlos González
+ */
 trait HasTransitionalStates
 {
     public static $states = [
@@ -16,6 +21,12 @@ trait HasTransitionalStates
         'rejected' => ['draft'],
     ];
 
+    /**
+     * Public function to transition to a state
+     * 
+     * @param   string  $newState   The state to transition to.
+     * @return  bool                The result of the action.
+     */
     public function transitionTo(string $newState) : bool
     {
         /**
@@ -45,6 +56,12 @@ trait HasTransitionalStates
         return true;
     }
 
+    /**
+     * Protected function to check for correct transition path.
+     * 
+     * @param   string  $newState   The state to transition to.
+     * @return  bool                The result of the action.
+     */
     protected function isTransitionAllowed($current, $new) : bool
     {
         return in_array($new, self::$states[$current]);
