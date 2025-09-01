@@ -3,15 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Patient extends Model
 {
     /**
      * Public function that returns the appointments given to the user
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function appointments () : BelongsToMany
+    public function appointments () : HasMany
     {
-        return $this->belongsToMany(Appointment::class);
+        return $this->hasMany(Appointment::class);
     }
 }

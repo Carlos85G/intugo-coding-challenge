@@ -3,17 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Appointment;
 
 class Location extends Model
 {
     /**
      * Public function that returns the appointments where this location is used
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function appointments () : BelongsToMany
+    public function appointments () : HasMany
     {
-        return $this->belongsToMany(Appointment::class);
+        return $this->hasMany(Appointment::class);
     }
 }
