@@ -5,7 +5,7 @@ namespace App\Helpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use App\Exceptions\ModelJsonFilter\InvalidClassException;
+use App\Exceptions\ModelJsonFilter\InvalidBuilderException;
 use App\Exceptions\ModelJsonFilter\InvalidJsonException;
 /**
  * Helper class to create model query builders from JSON strings
@@ -19,22 +19,22 @@ class ModelJsonFilter {
     /**
      * Public function to create a query builder from a JSON string and a model classname.
      * 
-     * @param   string    $json   The filters to create in the builder.
-     * @param   string    $class  The class name of the model to create the builder.
-     * @return  Builder           The filtered builder.
+     * @param   string    $json     The filters to create in the builder.
+     * @param   Builder   $query    The query to modify, filtered.
+     * @return  Builder             The filtered builder.
      * @throws  Exception
      */
-    public static function makeBuilderFromJson(string $json, string $class) : Builder
+    public static function makeBuilderFromJson(string $json, Builder &$query) : void
     {
         /** @var mixed[] */
         $filters = self::parseJson($json);
 
-        /** @var Builder The query builder */
-        $query = self::generateQuery($class);
-
         self::addWhereClausesByFilters($query, $filters);
+    }
 
-        return $query;
+    protected static function getModelClassFromQuery(Builder $query) : string
+    {
+        return get_class($query->getModel());
     }
 
     /**
@@ -45,7 +45,7 @@ class ModelJsonFilter {
      */
     protected static function getModelClassTag(Builder $query) : string
     {
-        $class = get_class($query->getModel());
+        $class = self::getModelClassFromQuery($query);
 
         return strtolower(
             class_basename($class)
@@ -59,16 +59,17 @@ class ModelJsonFilter {
      * @return  Builder                         The builder.
      * @throws  InvalidClassException
      */
-    protected static function generateQuery(string $class) : Builder
+    protected static function validateQuery(Builder $query) : bool
     {
+        $result = true;
+
+        $class = self::getModelClassFromQuery($query);
+
         if (!is_a($class, Model::class, true)) {
-            throw new InvalidClassException('Invalid class - Does not correspond to a model');
+            $result = false;
         }
 
-        return call_user_func([
-            "{$class}",
-            "query"
-        ]);
+        return $result;
     }
 
     /**
@@ -82,7 +83,16 @@ class ModelJsonFilter {
      */
     protected static function addWhereClausesByFilters(Builder &$query, array $filters) : void
     {
-        [$filterKeys, $fieldData] = Arr::divide($filters);
+        if (!self::validateQuery($query)) {
+            throw new InvalidBuilderException('Invalid builder - Does not correspond to a model');
+        }                    
+
+        [
+            /** @var string[] Relationship keys */
+            $filterKeys,
+            /** @var string[] Property data */
+            $fieldData
+        ] = Arr::divide($filters);
 
         foreach ($filterKeys as $index => $filterKey) {
             [
@@ -209,7 +219,7 @@ class ModelJsonFilter {
      */
     protected static function addWhereHas(Builder &$query, string $relationship, string $field, string $value) : void
     {
-        $query->WhereHas($relationship, function ($query) use ($field, $value) : void {
+        $query->whereHas($relationship, function ($query) use ($field, $value) : void {
             self::addWhere($query, $field, $value);
         });
     }
