@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('location_id')
                 ->notNull();
             $table->dateTime('date');
+            $table->enum('status', ['unconfirmed', 'confirmed'])
+                ->notNull()
+                ->default('unconfirmed');
             $table->timestamps();
 
             $table->unique(['patient_id', 'location_id', 'date']);
