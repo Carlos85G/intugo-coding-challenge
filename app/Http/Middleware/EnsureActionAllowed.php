@@ -16,7 +16,15 @@ class EnsureActionAllowed
      */
     public function handle(Request $request, Closure $next, string $action): Response
     {
-        if(!app()->make(RuleEvaluator::class)->isUserAllowed($action, $request->user())) {
+        /** @var bool */
+        $isAllowed = app()
+                    ->make(RuleEvaluator::class)
+                    ->isUserAllowed(
+                        $action,
+                        $request->user()
+                    );
+
+        if(!$isAllowed) {
             return response()->json([
                 "message" => 'Access denied - User does not have permission for this action'
             ], 403);
