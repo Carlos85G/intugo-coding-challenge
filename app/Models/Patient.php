@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Patient extends Model
 {
     /**
-     * Public function that returns the appointments given to the user
+     * Public function that returns the appointments given to the patient
      * @return HasMany
      */
     public function appointments () : HasMany
