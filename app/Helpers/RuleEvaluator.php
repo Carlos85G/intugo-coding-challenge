@@ -91,7 +91,7 @@ class RuleEvaluator {
             $operator = $rule["operator"];
             
             if (!array_key_exists($operator, $this->allowedOperators)) {
-                throw new OperationInvalidException("Operator invalid '{$operator}'");
+                throw new OperationInvalidException("Operator invalid '{$operator}' in rule for ruleset with action '{$action}'");
             }
 
             if (!$result = $this->isUserValidByRule($user, $rule)) {

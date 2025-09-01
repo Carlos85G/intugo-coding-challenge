@@ -28,7 +28,7 @@ class EnsureActionAllowed
                         $request->user()
                     );
         }catch(\Exception $e) {
-            Log::warning($e->getMessage());
+            Log::error("Unable to check action rulesets against user - {$e->getMessage()}");
         }
 
         if(!$isAllowed) {
