@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -14,8 +15,8 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/check-sql', function (Request $request) {
     $result = true;
-    $sql = "";
-    $bindings = [];
+    $message = "Success";
+    $data = [];
 
     try {
         $query = Appointment::query();
@@ -29,14 +30,20 @@ Route::post('/check-sql', function (Request $request) {
         $bindings = $query->getBindings();
 
         DB::select($sql, $bindings);
+
+        $data = [
+            "sql" => $sql,
+            "bindings" => $bindings,
+        ];
     } catch (QueryException $qe) {
         $result = false;
+        $message = $qe->getMessage();
     }
 
     return response()->json([
-        "result" => true,
-        "bindings" => $bindings,
-        "sql" => $sql
+        "result" => $result,
+        "message" => $message,
+        "data" => $data,
     ], 200);
 });
 
