@@ -50,7 +50,7 @@ trait HasTransitionalStates
         Event::defer(function () use ($self, $currentState) : void {
             $self->save();
 
-            event(new ModelTransitioned($this, $currentState));
+            event(new ModelTransitioned($self, $currentState));
         }, ["eloquent.updated: ".get_class($this)]);
 
         return true;
@@ -59,10 +59,11 @@ trait HasTransitionalStates
     /**
      * Protected function to check for correct transition path.
      * 
-     * @param   string  $newState   The state to transition to.
+     * @param   string  $current    The current state of the model.
+     * @param   string  $new        The new state to transition to.
      * @return  bool                The result of the action.
      */
-    protected function isTransitionAllowed($current, $new) : bool
+    protected function isTransitionAllowed(string $current, string $new) : bool
     {
         return in_array($new, self::$states[$current]);
     }
