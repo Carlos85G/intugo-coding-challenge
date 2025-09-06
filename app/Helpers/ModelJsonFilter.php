@@ -245,7 +245,7 @@ class ModelJsonFilter {
      * @param   Builder $query          The query.
      * @param   string  $relationship   The property to compare.
      * @param   string  $field          The property to compare.
-     * @param   string  $values         The property values to compare against.
+     * @param   mixed[] $values         The property values to compare against.
      * @return  void
      */
     protected static function addNestedOrWhereHas(Builder &$query, string $relationship, string $field, array $values) : void
@@ -268,7 +268,7 @@ class ModelJsonFilter {
      * 
      * @param   Builder $query          The query.
      * @param   string  $field          The property to compare.
-     * @param   string  $values         The property values to compare against.
+     * @param   mixed[] $values         The property values to compare against.
      * @return  void
      */
     protected static function addNestedOrWhere(Builder &$query, string $field, array $values) : void
